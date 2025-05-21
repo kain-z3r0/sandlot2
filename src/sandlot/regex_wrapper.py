@@ -1,5 +1,7 @@
+import re
+from collections.abc import Iterator
+
 from regex_registry import RegexRegistry
-from re import Match
 
 
 class RegexWrapper:
@@ -10,9 +12,18 @@ class RegexWrapper:
         rx = RegexRegistry.get(self.pattern_key, flags)
         return rx.findall(text)
 
-    def search(self, text: str, flags: int = 0) -> Match[str] | None:
+    def search(self, text: str, flags: int = 0) -> re.Match[str] | None:
         rx = RegexRegistry.get(self.pattern_key, flags)
         return rx.search(text)
+
+    def finditer(self, text: str, flags: int = 0) -> Iterator[re.Match[str]]:
+        rx = RegexRegistry.get(self.pattern_key, flags)
+        return rx.finditer(text)
+
+    @staticmethod
+    def build_rx(keywords: Iterator[str]) -> re.Pattern:
+        return RegexRegistry.build_pattern(keywords)
+
 
     @property
     def pattern(self):
