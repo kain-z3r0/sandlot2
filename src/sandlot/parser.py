@@ -1,4 +1,4 @@
-from extractor import InningExtractor, PlayerExtractor, TeamExtractor
+cfrom extractor import InningExtractor, PlayerExtractor, TeamExtractor
 from typing import TypedDict, NotRequired
 
 class PlayerRecord(TypedDict):
