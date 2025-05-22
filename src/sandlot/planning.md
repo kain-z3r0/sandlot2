@@ -1,10 +1,13 @@
 # Phases
 
 
-**Player Extractor**
-- Returns a dictionary of player metadata
-    - Player name, player ID
-- Uses regex to find player names
+1. Text loader
+2. Line filter
+3. Transformer
+4. 
+
+
+
 
 
 
