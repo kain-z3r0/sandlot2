@@ -1,5 +1,6 @@
 import re
-from collections.abc import Iterator
+from collections.abc import Iterable
+from functools import cache, cached_property
 
 from pattern_registry import PatternRegistry
 
@@ -16,14 +17,16 @@ class PatternHandler:
         rx = PatternRegistry.get(self.pattern_key, flags)
         return rx.search(text)
 
-    def finditer(self, text: str, flags: int = 0) -> Iterator[re.Match[str]]:
+    def finditer(self, text: str, flags: int = 0) -> Iterable[re.Match[str]]:
         rx = PatternRegistry.get(self.pattern_key, flags)
         return rx.finditer(text)
 
-    @staticmethod
-    def build_pattern(keywords: Iterator[str]) -> re.Pattern:
-        return "|".join(keyword for keyword in keywords)
-
-    @property
+    @cached_property
     def pattern(self):
         return PatternRegistry.get(self.pattern_key)
+
+
+@cache
+def build_pattern(entities: Iterable[str]) -> re.Pattern:
+    joined = "|".join(tuple(entities))
+    return re.compile(rf"(?P<entity>{joined})")
