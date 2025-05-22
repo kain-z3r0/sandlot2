@@ -12,7 +12,7 @@ class RegexRegistry:
     _INNING_HALF = r"(?:Top|Bottom)"
     _INNING_NUM = r"\d(?:st|nd|rd|th)"
     _AGE_BRACKET = r"(?P<age>\d{1,2}[Uu])\b"
-    _INNING_HEADER = rf"(?P<inn_half>{_INNING_HALF}) (?P<inn_num>{_INNING_NUM}) - (?P<team>.+)"
+    _INNING_HEADER = rf"(?P<inning>{_INNING_HALF} {_INNING_NUM}) - (?P<team_info>.+)"
 
     # =============== Player Regex ============================
     _VERBS_AHEAD = "|".join(

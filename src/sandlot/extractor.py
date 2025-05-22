@@ -1,111 +1,68 @@
 from regex_wrapper import RegexWrapper
-from uid_generator import generate_uid  # XXX: UID generation should be moved to transformer layer
 
-class PlayerExtractor():
+
+class PlayerExtractor:
     def __init__(self):
         self.players_ahead = RegexWrapper("players_ahead")
         self.players_behind = RegexWrapper("players_behind")
 
     def extract(self, text: str) -> set[str]:
-
         player_names = set(self.players_ahead.findall(text))
         player_names.update(self.players_behind.findall(text))
 
         return player_names
 
 
-class TeamExtractor(Extractor[TeamRecord]):
+class TeamExtractor:
     def __init__(self):
         self.inning_header_rx = RegexWrapper("inning_header")
+
+    def extract(self, text: str) -> set[str]:
+        team_data = set()
+        for match in self.inning_header_rx.finditer(text):
+            team_data.add(match.group("team_info"))
+
+        return team_data
+
+
+class InningExtractor:
+    def __init__(self):
+        self.inning_header_rx = RegexWrapper("inning_header")
+
+    def extract(self, text: str) -> set[str]:
+        inning_info = set()
+
+        for match in self.inning_header_rx.finditer(text):
+            inning_info.add(match.group("inning"))
+
+        return inning_info
+
+class AgeExtractor:
+    def __init__(self):
         self.age_rx = RegexWrapper("age_bracket")
-        self.teams_without_age: int = 0
 
     def extract(self, text: str):
+        pass
+
+class TeamNameExtractor:
+    def __init__(self):
+        self.team_name = RegexWrapper("team")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        team_lines = self.team_rx.findall(text)  # TODO: Capture entire line where team pattern match
-        teams: dict[str, TeamRecord] = {}
-
-        for line in team_lines:
-            age_match = self.age_rx.search(line)
-            age = age_match["age"].upper() if age_match else None
-            team_name = " ".join(
-                self.age_rx.pattern.sub("", line).upper().strip().split()
-            )
-
-            if team_name not in teams:
-                teams[team_name] = {
-                    "name": team_name,
-                    "uid": generate_uid(team_name, "team"),
-                    "age": age
-                }
-                if age is None:
-                    logger.warning(f"Team '{team_name}' is missing age bracket!")
-                    self.teams_without_age += 1
-            elif teams[team_name]["age"] is None and age:
-                teams[team_name]["age"] = age
-                self.teams_without_age -= 1
-                logger.info(f"Resolved age bracket for team '{team_name}': {age}")
-
-        return {"teams": list(teams.values())}
-
-
-"""
+from pathlib import Path
+from regex_registry import RegexRegistry
 if __name__ == "__main__":
-    filepath = Path(__file__).resolve().parent / "simple_example.txt"
+    filepath = Path(__file__).resolve().parent / "simple_sample.txt"
     text = filepath.read_text()
-
     ext = PlayerExtractor()
-    result = ext.extract(text)
+    players = ext.extract(text)
+    print(players)
 
-    print("Extracted Player Records:\n")
-    for record in result["players"]:
-        print(f"Name : {record['name']}")
-        print("-" * 40)
+    ext = TeamExtractor()
+    teams = ext.extract(text)
 
-"""
+    ext = InningExtractor()
+    innings = ext.extract(text)
+    print(innings)
+    print(teams)
+    print(f"Regex cache usage: {RegexRegistry.get.cache_info()}")

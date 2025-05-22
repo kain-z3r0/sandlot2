@@ -51,7 +51,7 @@ def _build_player_id(name: str, id_length: int = 7) -> str:
     return f"PLAYER_{suffix}"
 
 
-@lru_cache
+@lru_cache(maxsize = None)
 def generate_uid(name: str, entity: str, id_length: int = 7) -> str:
     if entity == "team":
         return _build_team_id(name, id_length)

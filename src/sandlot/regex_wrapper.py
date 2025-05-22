@@ -24,7 +24,6 @@ class RegexWrapper:
     def build_rx(keywords: Iterator[str]) -> re.Pattern:
         return RegexRegistry.build_pattern(keywords)
 
-
     @property
     def pattern(self):
         return RegexRegistry.get(self.pattern_key)
