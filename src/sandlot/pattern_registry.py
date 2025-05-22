@@ -1,13 +1,8 @@
 import re
-from functools import lru_cache
-from typing import Pattern as RegexPattern
-from collections.abc import Iterator
+from functools import cache
 
-class RegexRegistry:
-    """
-    PLACEHOLDER
-    """
 
+class PatternRegistry:
     # =============== Team & Inning Regex ==============================
     _INNING_HALF = r"(?:Top|Bottom)"
     _INNING_NUM = r"\d(?:st|nd|rd|th)"
@@ -81,7 +76,7 @@ class RegexRegistry:
     )
 
     _PLAYER_LOOKAHEAD = rf"(?P<name>{_PLAYER_BLOCK})(?=\s(?:{_VERBS_AHEAD}))"
-    
+
     _PLAYER_LOOKBEHIND = rf"(?:{_VERBS_BEHIND}) (?P<name>{_PLAYER_BLOCK})"
 
     _PATTERNS: dict[str, str] = {
@@ -91,16 +86,10 @@ class RegexRegistry:
         "age_bracket": _AGE_BRACKET,
         "team_info": _TEAM_INFO,
         "inning_half": _INNING_HALF,
-        "inning_num": _INNING_NUM
+        "inning_num": _INNING_NUM,
     }
 
-    @staticmethod
-    def build_pattern(keywords: Iterator[str]) -> re.Pattern:
-        keywords_joined = "|".join(keywords)
-        return re.compile(rf"(?P<key>{keywords_joined})")
-        
-
     @classmethod
-    @lru_cache(maxsize=None)
+    @cache
     def get(cls, key: str, flags: int = 0) -> re.Pattern:
         return re.compile(cls._PATTERNS[key], flags)
