@@ -27,6 +27,6 @@ class PatternHandler:
 
 
 @cache
-def build_pattern(entities: Iterable[str]) -> re.Pattern:
+def compile_entity_pattern(entities: Iterable[str]) -> re.Pattern:
     joined = "|".join(tuple(entities))
     return re.compile(rf"(?P<entity>{joined})")

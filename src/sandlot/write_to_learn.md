@@ -9,3 +9,6 @@
 - What is recursion?
 - What is a closure? when and how to use?
 - What does it mean to close over something?
+- When to use ClassName().method() vs class_name = ClassName(); class_name.method()?
+    - Spoilter alert! It  has to do with stateless and stateful classes!
+- 

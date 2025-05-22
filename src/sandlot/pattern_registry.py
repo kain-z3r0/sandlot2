@@ -79,6 +79,19 @@ class PatternRegistry:
 
     _PLAYER_LOOKBEHIND = rf"(?:{_VERBS_BEHIND}) (?P<name>{_PLAYER_BLOCK})"
 
+
+    # =============== Lines to Filter Out ============================
+    _LINE_FILTER = "|".join(
+        [
+            r"^.*[A-Z]{4} \d{1,2}$",  # score lines
+            # r"^.*[1-3] Out[s]?.*$",  # outs summary
+            r"^.*\|.*$",  # divider lines
+            # r"^[A-Z][a-z]+(?: [\w]+){0,2}$",  # single event lines
+        ]
+    )
+
+    # =============== Class Data / Methods ============================
+
     _PATTERNS: dict[str, str] = {
         "players_ahead": _PLAYER_LOOKAHEAD,
         "players_behind": _PLAYER_LOOKBEHIND,
@@ -87,6 +100,7 @@ class PatternRegistry:
         "team_info": _TEAM_INFO,
         "inning_half": _INNING_HALF,
         "inning_num": _INNING_NUM,
+        "filter": _LINE_FILTER,
     }
 
     @classmethod
