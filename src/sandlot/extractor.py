@@ -37,32 +37,22 @@ class InningExtractor:
 
         return inning_info
 
-class AgeExtractor:
-    def __init__(self):
-        self.age_rx = RegexWrapper("age_bracket")
-
-    def extract(self, text: str):
-        pass
-
-class TeamNameExtractor:
-    def __init__(self):
-        self.team_name = RegexWrapper("team")
 
 
-from pathlib import Path
-from regex_registry import RegexRegistry
-if __name__ == "__main__":
-    filepath = Path(__file__).resolve().parent / "simple_sample.txt"
-    text = filepath.read_text()
-    ext = PlayerExtractor()
-    players = ext.extract(text)
-    print(players)
+# from pathlib import Path
+# from regex_registry import RegexRegistry
+# if __name__ == "__main__":
+#     filepath = Path(__file__).resolve().parent / "simple_sample.txt"
+#     text = filepath.read_text()
+#     ext = PlayerExtractor()
+#     players = ext.extract(text)
+#     print(players)
 
-    ext = TeamExtractor()
-    teams = ext.extract(text)
+#     ext = TeamExtractor()
+#     teams = ext.extract(text)
 
-    ext = InningExtractor()
-    innings = ext.extract(text)
-    print(innings)
-    print(teams)
-    print(f"Regex cache usage: {RegexRegistry.get.cache_info()}")
+#     ext = InningExtractor()
+#     innings = ext.extract(text)
+#     print(innings)
+#     print(teams)
+#     print(f"Regex cache usage: {RegexRegistry.get.cache_info()}")

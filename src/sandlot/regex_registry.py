@@ -8,11 +8,12 @@ class RegexRegistry:
     PLACEHOLDER
     """
 
-    # =============== Team Regex ==============================
+    # =============== Team & Inning Regex ==============================
     _INNING_HALF = r"(?:Top|Bottom)"
     _INNING_NUM = r"\d(?:st|nd|rd|th)"
     _AGE_BRACKET = r"(?P<age>\d{1,2}[Uu])\b"
     _INNING_HEADER = rf"(?P<inning>{_INNING_HALF} {_INNING_NUM}) - (?P<team_info>.+)"
+    _TEAM_INFO = rf"(?:{_INNING_HALF} {_INNING_NUM} - )(?P<team_info>.+)"
 
     # =============== Player Regex ============================
     _VERBS_AHEAD = "|".join(
@@ -88,6 +89,9 @@ class RegexRegistry:
         "players_behind": _PLAYER_LOOKBEHIND,
         "inning_header": _INNING_HEADER,
         "age_bracket": _AGE_BRACKET,
+        "team_info": _TEAM_INFO,
+        "inning_half": _INNING_HALF,
+        "inning_num": _INNING_NUM
     }
 
     @staticmethod

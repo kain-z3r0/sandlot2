@@ -9,6 +9,13 @@ from regex_wrapper import RegexWrapper
 from uid_generator import generate_uid
 
 
+def _uid_replacer(type: str):
+    def replacer(match: re.Match) -> str:
+        return generate_uid(match.group("key"), type)
+
+    return replacer
+
+
 class PlayerTransformer:
     def transform(self, players: set[str], text: str) -> str:
         self.players_rx = RegexWrapper.build_rx(players)

@@ -7,3 +7,5 @@
 - how to use TypeVar? Why use it? What are the pros and cons? When to use it?
 - What is a closure? When, how, where to use it?
 - What is recursion?
+- What is a closure? when and how to use?
+- What does it mean to close over something?
