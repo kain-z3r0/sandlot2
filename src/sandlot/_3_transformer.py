@@ -33,9 +33,9 @@ Note:
 # TODO: Create a transformer for events
 
 
-# TODO: Ensure each transformer keeps raw lines as keys
-#   - This enables safe lookup during text rewriting
-#   - Raw line → UID mapping must be exact to avoid incorrect replacements
+# XXX: Ensure each transformer keeps raw lines as keys
+#    - This enables safe lookup during text rewriting
+#    - Raw line → UID mapping must be exact to avoid incorrect replacements
 
 from typing import TypedDict
 
@@ -54,7 +54,7 @@ def team_transformer(raw_team_lines: tuple[str, ...]) -> dict[str, TeamRecord]:
     age_pattern = PatternHandler("age_bracket")
 
     for raw_line in raw_team_lines:
-        team_name, age = parse_team_line(raw_line, age_pattern)
+        team_name, age = _parse_team_line(raw_line, age_pattern)
         record = team_records.setdefault(
             raw_line, {"name": team_name, "uid": generate_uid(team_name, "team"), "age": age}
         )
@@ -63,8 +63,23 @@ def team_transformer(raw_team_lines: tuple[str, ...]) -> dict[str, TeamRecord]:
     return team_records
 
 
-def parse_team_line(line: str, age_pattern: PatternHandler) -> tuple[str, str | None]:
+def _parse_team_line(line: str, age_pattern: PatternHandler) -> tuple[str, str | None]:
     age_match = age_pattern.search(line)
     age = age_match.group("age").upper() if age_match else None
-    team_name = " ".join(age_pattern.pattern.sub("", line).upper().split())
+    team_name = " ".join(age_pattern.sub("", line).upper().split())
     return team_name, age
+
+
+
+from _1_loader import load
+from _2_extractor import team_extractor
+def main():
+    text = load("simple_sample.txt")
+    teams = team_extractor(text)
+
+    trans = team_transformer(teams)
+    print(trans)
+
+
+if __name__ == "__main__":
+    main()

@@ -22,3 +22,21 @@ Goal:
 # TODO: Use a replacement function to inject UIDs for matched team names
 
 # TODO: Return the rewritten version of the input text
+
+from _1_loader import load
+from _2_extractor import team_extractor
+from _3_transformer import team_transformer, TeamRecord
+from pattern_handler import compile_pattern
+import re
+
+# NOTE: When subbing in UIDs for names, we must do it one by one in order
+#       to replace name for correct UID
+def replacer(text: str, mapping: dict[str, dict[str, str]], replacement_key: str) -> str:
+    for raw_text, entity in mapping.items():
+        text = compile_pattern(raw_text).sub(entity[replacement_key], text)
+    return text
+
+
+
+
+

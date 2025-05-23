@@ -20,3 +20,4 @@ def team_extractor(text: str) -> tuple[str, ...]:
 
 def line_selector(text: str) -> tuple[str, ...]:
     return tuple(sPatternHandler("filter").findall(text, re.MULTILINE))
+
