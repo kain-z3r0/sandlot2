@@ -84,9 +84,9 @@ class PatternRegistry:
     _LINE_FILTER = "|".join(
         [
             r"^.*[A-Z]{4} \d{1,2}$",  # score lines
-            # r"^.*[1-3] Out[s]?.*$",  # outs summary
+            r"^.*[1-3] Out[s]?.*$",  # outs summary
             r"^.*\|.*$",  # divider lines
-            # r"^[A-Z][a-z]+(?: [\w]+){0,2}$",  # single event lines
+            r"^[A-Z][a-z]+(?: [\w]+){0,2}$",  # single event lines
         ]
     )
 
