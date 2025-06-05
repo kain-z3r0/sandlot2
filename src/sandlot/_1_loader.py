@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def load(filename: str) -> str:
     """
     Load text file as a string.
@@ -7,4 +8,3 @@ def load(filename: str) -> str:
     text_file = Path(__file__).resolve().parent / filename
 
     return text_file.read_text()
-

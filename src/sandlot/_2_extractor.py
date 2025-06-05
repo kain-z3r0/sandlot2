@@ -19,5 +19,27 @@ def team_extractor(text: str) -> tuple[str, ...]:
 
 
 def line_selector(text: str) -> tuple[str, ...]:
-    return tuple(sPatternHandler("filter").findall(text, re.MULTILINE))
+    return tuple(PatternHandler("filter").findall(text, re.MULTILINE))
 
+
+def player_extractor(text: str) -> tuple[str, ...]:
+    players = set(PatternHandler("players_ahead").findall(text))
+    players.update(PatternHandler("players_behind").findall(text))
+    return tuple(players)
+
+
+def inning_extractor(text: str) -> tuple[str, ...]:
+    return tuple(PatternHandler("inning_header").findall(text))
+    
+
+from _1_loader import load
+
+def main():
+    text = load("simple_sample.txt")
+
+    innings = inning_extractor(text)
+    print(innings)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,5 @@
 import re
-from collections.abc import Iterable, Callable
+from collections.abc import Callable, Iterable
 from functools import cache, cached_property
 
 from pattern_registry import PatternRegistry
@@ -33,9 +33,9 @@ class PatternHandler:
 @cache
 def compile_entity_pattern(entities: tuple[str]) -> re.Pattern:
     joined = "|".join(entities)
-    return re.compile(rf"(?P<entity>{joined})")
+    return re.compile(rf"(?P<entity>\b{joined})\b")
 
 
 @cache
 def compile_pattern(entity: str) -> re.Pattern:
-    return re.compile(rf"(?P<entity>{entity})")
+    return re.compile(rf"(?P<entity>\b{entity}\b)")

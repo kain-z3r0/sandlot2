@@ -38,7 +38,6 @@ class InningExtractor:
         return inning_info
 
 
-
 # from pathlib import Path
 # from regex_registry import RegexRegistry
 # if __name__ == "__main__":

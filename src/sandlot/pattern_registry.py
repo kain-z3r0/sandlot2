@@ -7,7 +7,7 @@ class PatternRegistry:
     _INNING_HALF = r"(?:Top|Bottom)"
     _INNING_NUM = r"\d(?:st|nd|rd|th)"
     _AGE_BRACKET = r"(?P<age>\d{1,2}[Uu])\b"
-    _INNING_HEADER = rf"(?P<inning>{_INNING_HALF} {_INNING_NUM}) - (?P<team_info>.+)"
+    _INNING_HEADER = rf"(?P<inning>{_INNING_HALF} {_INNING_NUM})(?:.+)"
     _TEAM_INFO = rf"(?:{_INNING_HALF} {_INNING_NUM} - )(?P<team_info>.+)"
 
     # =============== Player Regex ============================
@@ -78,7 +78,6 @@ class PatternRegistry:
     _PLAYER_LOOKAHEAD = rf"(?P<name>{_PLAYER_BLOCK})(?=\s(?:{_VERBS_AHEAD}))"
 
     _PLAYER_LOOKBEHIND = rf"(?:{_VERBS_BEHIND}) (?P<name>{_PLAYER_BLOCK})"
-
 
     # =============== Lines to Filter Out ============================
     _LINE_FILTER = "|".join(

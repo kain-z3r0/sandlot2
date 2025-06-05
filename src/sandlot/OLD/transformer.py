@@ -22,6 +22,7 @@ class TeamTransformer:
         replacer = _uid_replacer("team")
         return self.team_rx.sub(replacer, text)
 
+
 class InningTransformer:
     def transform(self, inning_headers: set[str], text: str) -> str:
         self.inning_rx = RegexWrapper.build_rx(inning_headers)
@@ -30,10 +31,7 @@ class InningTransformer:
     def normalize_inning(self, match):
         tag = "INNING_HALF_"
         inning = match.group("key")
-        return f"{tag}{"".join(inning.upper().split())}"
-
-
-
+        return f"{tag}{''.join(inning.upper().split())}"
 
 
 def main():
@@ -45,7 +43,6 @@ def main():
 
     teams = TeamExtractor().extract(text)
     updated_text = TeamTransformer().transform(teams, updated_text)
-    
 
     innings_raw = InningExtractor().extract(updated_text)
     updated_text = InningTransformer().transform(innings_raw, updated_text)

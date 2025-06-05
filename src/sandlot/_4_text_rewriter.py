@@ -23,11 +23,8 @@ Goal:
 
 # TODO: Return the rewritten version of the input text
 
-from _1_loader import load
-from _2_extractor import team_extractor
-from _3_transformer import team_transformer, TeamRecord
 from pattern_handler import compile_pattern
-import re
+
 
 # NOTE: When subbing in UIDs for names, we must do it one by one in order
 #       to replace name for correct UID
@@ -39,4 +36,9 @@ def replacer(text: str, mapping: dict[str, dict[str, str]], replacement_key: str
 
 
 
-
+def skip_line(text: str, lines: tuple[str, ...]) -> str:
+    return "\n".join(
+        line 
+        for line in text.splitlines() 
+        if line not in lines
+    )

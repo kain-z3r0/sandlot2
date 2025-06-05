@@ -48,13 +48,19 @@ class TeamRecord(TypedDict):
     uid: str
     age: str | None
 
+class PlayerRecord(TypedDict):
+    name: str
+    uid: str
+
+class InningRecord(TypedDict):
+    tag: str
 
 def team_transformer(raw_team_lines: tuple[str, ...]) -> dict[str, TeamRecord]:
     team_records: dict[str, TeamRecord] = {}
     age_pattern = PatternHandler("age_bracket")
 
     for raw_line in raw_team_lines:
-        team_name, age = _parse_team_line(raw_line, age_pattern)
+        team_name, age = _split_team_name_age(raw_line, age_pattern)
         record = team_records.setdefault(
             raw_line, {"name": team_name, "uid": generate_uid(team_name, "team"), "age": age}
         )
@@ -63,22 +69,50 @@ def team_transformer(raw_team_lines: tuple[str, ...]) -> dict[str, TeamRecord]:
     return team_records
 
 
-def _parse_team_line(line: str, age_pattern: PatternHandler) -> tuple[str, str | None]:
+def _split_team_name_age(line: str, age_pattern: PatternHandler) -> tuple[str, str | None]:
     age_match = age_pattern.search(line)
     age = age_match.group("age").upper() if age_match else None
     team_name = " ".join(age_pattern.sub("", line).upper().split())
     return team_name, age
 
+def player_transformer(players: tuple[str, ...]) -> dict[str, PlayerRecord]:
+    player_records: dict[str, PlayerRecord] = {}
+
+    for player in players:
+        record = player_records.setdefault(
+            player, {"name": player, "uid": generate_uid(player, "player")}
+        )
+
+    return player_records
+
+def inning_transformer(innings: tuple[str, ...]) -> dict[str, InningRecord]:
+    inn_half = PatternHandler("inning_half").search(innings)
+    inn_num = PatternHandler("inning_num").search(innings)
+
+    inn_records: dict[str, InningRecord] = {}
+
+    for inning in innings:
+        half = 
+        record = inn_records.setdefault(
+            inning, {"half": }
+        )
+
 
 
 from _1_loader import load
-from _2_extractor import team_extractor
+from _2_extractor import team_extractor, line_selector, player_extractor, inning_extractor
+
+
 def main():
     text = load("simple_sample.txt")
     teams = team_extractor(text)
-
+    lines = line_selector(text)
     trans = team_transformer(teams)
-    print(trans)
+    players = player_extractor(text)
+    pt = player_transformer(players)
+    inns = inning_extractor(text)
+    print(inns)
+
 
 
 if __name__ == "__main__":
