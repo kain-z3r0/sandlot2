@@ -28,17 +28,14 @@ from pattern_handler import compile_pattern
 
 # NOTE: When subbing in UIDs for names, we must do it one by one in order
 #       to replace name for correct UID
-def replacer(text: str, mapping: dict[str, dict[str, str]], replacement_key: str) -> str:
+def replacer(text: str, mapping: dict[str, dict[str, str]], replacement_key: str, use_boundary: bool = True) -> str:
     for raw_text, entity in mapping.items():
-        text = compile_pattern(raw_text).sub(entity[replacement_key], text)
+        replacement = entity[replacement_key]
+        text = compile_pattern(raw_text, use_boundary).sub(replacement, text)
     return text
 
 
 
 
 def skip_line(text: str, lines: tuple[str, ...]) -> str:
-    return "\n".join(
-        line 
-        for line in text.splitlines() 
-        if line not in lines
-    )
+    return "\n".join(line for line in text.splitlines() if line not in lines)

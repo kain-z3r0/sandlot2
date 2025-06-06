@@ -4,11 +4,13 @@ from functools import cache
 
 class PatternRegistry:
     # =============== Team & Inning Regex ==============================
-    _INNING_HALF = r"(?:Top|Bottom)"
-    _INNING_NUM = r"\d(?:st|nd|rd|th)"
+    _INNING_HALF = r"(?P<half>(?:Top|Bottom))"
+    _INNING_NUM = r"(?P<num>\d)(?:st|nd|rd|th)"
     _AGE_BRACKET = r"(?P<age>\d{1,2}[Uu])\b"
-    _INNING_HEADER = rf"(?P<inning>{_INNING_HALF} {_INNING_NUM})(?:.+)"
-    _TEAM_INFO = rf"(?:{_INNING_HALF} {_INNING_NUM} - )(?P<team_info>.+)"
+    _HALF_NOLAB = r"(?:Top|Bottom)"
+    _NUM_NOLAB = r"(?:\d(?:st|nd|rd|th))"
+    _TEAM_INFO = rf"{_HALF_NOLAB} {_NUM_NOLAB} - (?P<team_info>.+)"
+    _INNING_HEADER = rf"(?P<inning>{_HALF_NOLAB} {_NUM_NOLAB} - )(?:.+)"
 
     # =============== Player Regex ============================
     _VERBS_AHEAD = "|".join(

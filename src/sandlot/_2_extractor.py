@@ -38,6 +38,7 @@ def main():
     text = load("simple_sample.txt")
 
     innings = inning_extractor(text)
+    teams = team_extractor(text)
     print(innings)
 
 

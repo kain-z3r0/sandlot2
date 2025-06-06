@@ -37,5 +37,9 @@ def compile_entity_pattern(entities: tuple[str]) -> re.Pattern:
 
 
 @cache
-def compile_pattern(entity: str) -> re.Pattern:
-    return re.compile(rf"(?P<entity>\b{entity}\b)")
+def compile_pattern(entity: str, use_boundaries: bool = True) -> re.Pattern:
+    escaped = re.escape(entity)
+    if use_boundaries:
+        return re.compile(rf"\b{escaped}\b")
+    return re.compile(escaped)
+

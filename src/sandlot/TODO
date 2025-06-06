@@ -1,0 +1,239 @@
+TODO 
+
+# 📜 Baseball Game Log Tagging System (Parsing Guide)
+
+## 🌟 Goal
+
+Design a **flat, line-per-record tagging format** for baseball game logs to:
+
+* Normalize raw play-by-play text
+* Enable **easy parsing** into structured formats (CSV, pandas DataFrame)
+* Support advanced analytics like **Run Expectancy Matrix (REM)**, **situational hitting**, **baserunning**, etc.
+
+---
+
+## 🏷️ Tag Format
+
+Each line = one structured event.
+
+* Tags are `key=value` pairs, separated by commas.
+* Every line includes a `type=...` field to indicate the event type.
+* Batters and pitchers are tracked with `batter=` and `pitcher=`.
+* Runners use `player=`.
+* Related events (e.g., pitches within AB) share a common `ab_id`.
+
+---
+
+## 📚 Event Types and Examples
+
+### 🧂 At-Bat (AB) Event
+
+```text
+ab_id=001,type=ab_event,batter=T_M,result=WALK,pitcher=A_Avitia,
+outs_before=0,b1_before=None,b2_before=B_C,b3_before=Z_E,
+outs_after=0,b1_after=T_M,b2_after=B_C,b3_after=Z_E,runs_scored=0,count=4-2
+```
+
+### ⚾ Pitch Event
+
+```text
+ab_id=001,type=pitch_event,batter=T_M,result=BALL,count=2-2
+```
+
+### 🏃 Runner Event (e.g., Steal, Advance)
+
+```text
+ab_id=001,type=runner_event,player=Z_E,result=STEAL_2B,success=True
+```
+
+### 🧱 Inning Header (Standardized)
+
+```text
+type=inning,half=TOP,num=3,team_at_bat=JGBDMND
+```
+
+---
+
+## 📊 DataFrame Usage Examples
+
+```python
+import pandas as pd
+
+# Parse each line into a dictionary
+data = [
+    "ab_id=001,type=pitch_event,batter=B_C,result=FOUL,count=0-0",
+    "ab_id=001,type=runner_event,player=Z_E,result=STEAL_2B,success=True",
+    "ab_id=001,type=ab_event,batter=B_C,result=WALK,pitcher=A_Avitia,outs_before=0,b1_before=None,..."
+]
+
+records = [dict(pair.split("=") for pair in line.split(",") if "=" in pair) for line in data]
+df = pd.DataFrame(records)
+```
+
+### 🔍 Analyze Situational Hitting
+
+```python
+df[(df["type"] == "ab_event") & (df["batter"] == "B_C")]
+```
+
+### 🔍 Analyze Baserunning
+
+```python
+df[(df["type"] == "runner_event") & (df["player"] == "Z_E")]
+```
+
+---
+
+## ✅ Key Rules
+
+* Use `ab_id` to tie together all events from a single plate appearance.
+* Pitch count is updated using `count` on each `pitch_event`.
+* Store runner state before and after with `b1_before`, `b2_after`, etc.
+* Use `type=...` as a primary filter for logic (pitch, runner, ab, inning, etc).
+
+---
+
+## 🤮 Future-Proofing
+
+* This format supports any number of events (e.g., wild pitches, errors, pickoffs) by extending `type=`.
+* CSV output is trivial.
+* Parsing logic is simple: split on commas, then split on `=`.
+
+---
+
+## 📝 Tagging Examples (Raw vs Normalized)
+
+### Example 1:
+
+**Raw:**
+
+```text
+Bottom 2nd - AZBC 2034 Frisby
+```
+
+**Tagged:**
+
+```text
+type=inning,half=BOTTOM,num=2,team_at_bat=AZBC_2034_FRISBY
+```
+
+### Example 2:
+
+**Raw:**
+
+```text
+Ball 1, Strike 1 looking, In play.
+```
+
+**Tagged:**
+
+```text
+ab_id=001,type=pitch_event,batter=T_M,result=BALL,count=0-0
+ab_id=001,type=pitch_event,batter=T_M,result=STRIKE_LOOKING,count=0-1
+ab_id=001,type=pitch_event,batter=T_M,result=IN_PLAY,count=0-2
+```
+
+### Example 3:
+
+**Raw:**
+
+```text
+T M singles on a line drive to center fielder A Gutwein.
+```
+
+**Tagged:**
+
+```text
+ab_id=001,type=ab_event,batter=T_M,result=SINGLE,pitcher=A_Avitia,...
+```
+
+### Example 4:
+
+**Raw:**
+
+```text
+Z E steals 2nd, Z E steals 3rd
+```
+
+**Tagged:**
+
+```text
+ab_id=002,type=runner_event,player=Z_E,result=STEAL_2B,success=True
+ab_id=002,type=runner_event,player=Z_E,result=STEAL_3B,success=True
+```
+
+### Example 5:
+
+**Raw:**
+
+```text
+Julian strikes out swinging, T M pitching.
+```
+
+**Tagged:**
+
+```text
+ab_id=003,type=ab_event,batter=JULIAN,result=STRIKEOUT_SWINGING,pitcher=T_M,outs_before=2,outs_after=3,count=3-2
+```
+
+### Example 6:
+
+**Raw:**
+
+```text
+L Ortiz strikes out swinging, T M pitching.
+```
+
+**Tagged:**
+
+```text
+ab_id=004,type=ab_event,batter=L_ORTIZ,result=STRIKEOUT_SWINGING,pitcher=T_M,outs_before=2,outs_after=3,count=3-2
+```
+
+### Example 7:
+
+**Raw:**
+
+```text
+Z E walks, A Avitia pitching.
+```
+
+**Tagged:**
+
+```text
+ab_id=005,type=ab_event,batter=Z_E,result=WALK,pitcher=A_Avitia,outs_before=0,outs_after=0,count=4-0,b1_after=Z_E
+```
+
+### Example 8:
+
+**Raw:**
+
+```text
+B C walks, A Avitia pitching, Z E remains at 3rd.
+```
+
+**Tagged:**
+
+```text
+ab_id=006,type=ab_event,batter=B_C,result=WALK,pitcher=A_Avitia,outs_before=0,
+b1_before=None,b2_before=None,b3_before=Z_E,
+outs_after=0,b1_after=B_C,b2_after=None,b3_after=Z_E,runs_scored=0,count=4-0
+```
+
+### Example 9:
+
+**Raw:**
+
+```text
+T M walks, A Avitia pitching, Z E remains at 3rd, B C remains at 2nd.
+```
+
+**Tagged:**
+
+```text
+ab_id=007,type=ab_event,batter=T_M,result=WALK,pitcher=A_Avitia,outs_before=0,
+b1_before=None,b2_before=B_C,b3_before=Z_E,
+outs_after=0,b1_after=T_M,b2_after=B_C,b3_after=Z_E,runs_scored=0,count=4-2
+```
+
+Let me know when you're ready to tag other event types like errors, wild pitches, or fielding plays!

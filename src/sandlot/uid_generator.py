@@ -42,7 +42,7 @@ def _build_team_id(name: str) -> str:
     chars_needed = id_length - len(prefix)
     core_name = _select_chars(non_vowels, vowels, chars_needed)
     suffix = core_name.ljust(chars_needed, "X")
-    return f"TEAM_{prefix}{suffix}"
+    return f"team_at_bat={prefix}{suffix}"
 
 
 def _build_player_id(name: str) -> str:
@@ -53,24 +53,21 @@ def _build_player_id(name: str) -> str:
     return f"PLAYER_{suffix}"
 
 def _build_inning_id(inning: str) -> str:
-    half = PatternHandler("inning_half").search(inning)
-    num = PatternHandler("inning_num").search(inning)
-    return f"INNHALF_{half} INNNUM_{num}"
+    half = PatternHandler("inning_half").search(inning).group("half").upper()
+    num = PatternHandler("inning_num").search(inning).group("num")
+    return f"type=inning,half={half},num={num},"
 
 # Dispatch map
-_uid_builders: dict[str, Callable[..., str]] = {
+_uid_builders: dict[str, Callable[[str], str]] = {
     "team": _build_team_id,
     "player": _build_player_id,
     "inning": _build_inning_id
 }
 
 @cache
-def generate_uid(value: str, entity: str, id_length: int = 7) -> str:
-    if entity == "team":
-        return _build_team_id(value, id_length)
-    elif entity == "player":
-        return _build_player_id(value, id_length)
-    elif entity == "inning":
-        return _build_inning_id(value)
-    else:
+def generate_uid(value: str, entity: str) -> str:
+    try:
+        builder = _uid_builders[entity]
+        return builder(value)
+    except KeyError:
         raise ValueError(f"Entity type '{entity}' not supported!")

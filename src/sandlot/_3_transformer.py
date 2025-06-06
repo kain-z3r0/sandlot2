@@ -53,7 +53,7 @@ class PlayerRecord(TypedDict):
     uid: str
 
 class InningRecord(TypedDict):
-    tag: str
+    uid: str
 
 def team_transformer(raw_team_lines: tuple[str, ...]) -> dict[str, TeamRecord]:
     team_records: dict[str, TeamRecord] = {}
@@ -79,23 +79,21 @@ def player_transformer(players: tuple[str, ...]) -> dict[str, PlayerRecord]:
     player_records: dict[str, PlayerRecord] = {}
 
     for player in players:
-        record = player_records.setdefault(
+        player_records.setdefault(
             player, {"name": player, "uid": generate_uid(player, "player")}
         )
 
     return player_records
 
 def inning_transformer(innings: tuple[str, ...]) -> dict[str, InningRecord]:
-    inn_half = PatternHandler("inning_half").search(innings)
-    inn_num = PatternHandler("inning_num").search(innings)
-
-    inn_records: dict[str, InningRecord] = {}
+    inning_records: dict[str, InningRecord] = {}
 
     for inning in innings:
-        half = 
-        record = inn_records.setdefault(
-            inning, {"half": }
+        inning_records.setdefault(
+            inning, {"uid": generate_uid(inning, "inning")}
         )
+
+    return inning_records
 
 
 
@@ -111,7 +109,9 @@ def main():
     players = player_extractor(text)
     pt = player_transformer(players)
     inns = inning_extractor(text)
-    print(inns)
+    inn_trans = inning_transformer(inns)
+    print(inn_trans)
+    print(trans)
 
 
 
